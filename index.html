@@ -221,6 +221,11 @@ body{
   padding:3px 8px;border-radius:2px;background:var(--tile);
 }
 .chip.move{border-color:var(--accent);color:var(--accent);background:transparent;font-weight:500}
+.chip.opt{border-style:dashed;border-color:var(--muted);color:var(--ink-soft);font-weight:700;letter-spacing:.06em}
+
+.stop.optional .stop-dot{background:var(--tile);border-style:dashed;border-width:2px}
+.stop.optional .stop-card{border:1px dashed var(--line);box-shadow:none;background:transparent}
+.stop.optional .stop-name{font-weight:500}
 .map-link{
   font-size:11.5px;letter-spacing:.06em;font-weight:700;
   color:#fff;background:var(--ink);
@@ -306,32 +311,43 @@ const TRIP = [
   },
   {
     date: "8/27", dow: "四", city: "kyoto", cityName: "京都",
-    leg: "京都完整日 · 洛西 → 東山",
-    tip: "<b>唯一一整天的京都，行程排得滿。</b>嵐山八點前到竹林，晚一小時完全是兩個地方。中午到下午移動多，帶水。",
+    leg: "京都完整日 · 東山 → 嵐山",
+    tip: "<b>念佛寺是機動行程</b>，16:15 停止受付、單程要走 35 分鐘，下午茶拖過 15:20 就放掉，不影響後面。小火車已鎖 13:30 那班，京都車站出發要留 70 分鐘。",
     stops: [
-      { t:"08:00", n:"嵐山 竹林小徑", d:"八點前到人最少。整條走完約十五分鐘，慢慢拍。", move:"阪急京都線→嵐山線 或 JR 嵯峨嵐山", map:"竹林の小径 嵐山" },
-      { t:"09:00", n:"天龍寺", d:"曹源池庭園是世界遺產。北門出去直接接竹林，動線很順。", map:"天龍寺" },
-      { t:"10:30", n:"渡月橋・嵐山散步", d:"時間夠可以加碼嵯峨野小火車，或走去大河內山莊。", map:"渡月橋" },
-      { t:"12:00", n:"嵐山午餐", d:"湯豆腐或鰻魚飯，兩個都是這一區的招牌。", map:"嵐山 湯豆腐" },
-      { t:"14:00", n:"金閣寺", d:"從嵐山搭市巴士約 40 分鐘。金閣在陽光下反光很強，晴天最值得。", move:"市巴士 11 → 59", map:"金閣寺" },
-      { t:"16:30", n:"清水寺", d:"傍晚人潮較退。舞台看出去的視野是重點，順走音羽瀑布。", move:"市巴士 205 → 100", map:"清水寺" },
-      { t:"18:00", n:"二年坂・三年坂", d:"石坂路一路散步下山，沿路都是老店。斜坡有點滑，注意腳步。", map:"二年坂 京都" },
-      { t:"19:30", n:"河原町晚餐", d:"吃完直接走回飯店，十分鐘。", map:"河原町 京都 居酒屋" }
+      { t:"06:10", n:"民宿 → 四条高倉", d:"走路 10 分鐘到站牌，搭 207 到東山安井。這個時間巴士很空。", move:"市巴士 207", map:"四条高倉 バス停 京都" },
+      { t:"06:50", n:"八坂通・八坂塔", d:"法觀寺五重塔。清晨完全沒人，是這條坡道一天中最好拍的時段。", map:"法観寺 八坂の塔" },
+      { t:"07:30", n:"二年坂・三年坂", d:"店家都還沒開，純散步上山。石坂有點滑，注意腳步。", map:"二年坂 京都" },
+      { t:"08:00", n:"清水寺", d:"夏季六點就開門，這個時間人最少。舞台視野是重點，順走音羽瀑布。", map:"清水寺" },
+      { t:"10:00", n:"回房休息", d:"刻意避開一天最曬的時段，順便補眠。", map:"691 Inabadocho, Shimogyo Ward, Kyoto" },
+      { t:"11:00", n:"京都車站午餐", d:"民宿走路 10 分鐘。拉麵小路或伊勢丹地下都可以。", map:"京都駅ビル" },
+      { t:"12:20", n:"JR 嵯峨野線 → 馬堀站", d:"約 25 分鐘。下車後走到トロッコ亀岡駅約 10 分鐘，別走錯成 JR 亀岡站。", move:"JR 嵯峨野線", map:"馬堀駅" },
+      { t:"13:30", n:"嵯峨野小火車 龜岡 → 嵐山", d:"嵯峨野 10 號，13:50 抵達トロッコ嵐山，車程 20 分鐘。保津川溪谷全程開窗。", move:"嵯峨野觀光鐵道", map:"トロッコ亀岡駅" },
+      { t:"14:00", n:"竹林小徑・野宮神社", d:"トロッコ嵐山站出來就接竹林北段，野宮神社在竹林中段，順路。", map:"竹林の小径 嵐山" },
+      { t:"14:45", n:"嵐山庭園 下午茶", d:"要預約，或現場抽號碼牌。", map:"嵐山 京都" },
+      { t:"16:00", n:"愛宕念佛寺（機動）", d:"1200 尊表情各異的羅漢石像。<b>16:15 停止受付</b>，下午茶若拖過 15:20 就直接放掉。單程步行約 35 分鐘，趕的話搭京都巴士到「おたぎ寺前」。", move:"步行 或 京都巴士", opt:true, map:"愛宕念仏寺" },
+      { t:"17:30", n:"蕎麥麵 → 渡月橋", d:"吃完走到渡月橋，傍晚的光線比中午好看。", map:"渡月橋" },
+      { t:"18:40", n:"嵐電嵯峨 → 烏丸", d:"嵐電到西院轉阪急京都線，約 35 分鐘。", move:"嵐電 → 阪急京都線", map:"阪急烏丸駅" },
+      { t:"19:30", n:"新京極商店街", d:"有頂棚，晚上還很熱鬧。離民宿走路可到。", map:"新京極商店街" },
+      { t:"20:00", n:"Bingo 居酒屋", d:"要預約。吃完走回民宿。", map:"Bingo 居酒屋 京都" }
     ]
   },
   {
     date: "8/28", dow: "五", city: "osaka", cityName: "京都 → 大阪",
     leg: "移動日 · 稻荷 → 難波",
-    tip: "<b>伏見稻荷先去再回頭拿行李。</b>大阪飯店就在黑門市場旁邊，但市場傍晚很多店會收，想吃海鮮丼別拖到五點後。",
+    tip: "<b>行李一早就寄京都車站置物櫃</b>，下午回來拿。千本鳥居走到四辻看 view 就折返，走到山頂來回要兩小時，會壓到金閣寺。",
     stops: [
-      { t:"07:30", n:"伏見稻荷大社", d:"千本鳥居早上人少最好拍。全程上山要兩小時，走到四辻看 view 就可以折返。", move:"京阪本線 祇園四条 → 伏見稲荷", map:"伏見稲荷大社" },
-      { t:"10:00", n:"錦市場", d:"京都的廚房，離飯店走路可到。豆乳甜甜圈、玉子燒、漬物邊走邊吃。", move:"京阪 → 阪急 京都河原町", map:"錦市場" },
-      { t:"11:30", n:"退房取行李", d:"抓一小時緩衝，別壓太緊。", map:"691 Inabadocho, Shimogyo Ward, Kyoto" },
-      { t:"12:30", n:"京都 → 大阪", d:"阪急京都線 京都河原町→大阪梅田約 45 分不用轉車，再轉御堂筋線到難波，走到日本橋約八分鐘。", move:"阪急京都線 → 御堂筋線", map:"難波駅 大阪" },
-      { t:"14:30", n:"大阪飯店 Check-in", d:"日本橋二丁目。位置很好，黑門市場、道頓堀、電電町都在走路範圍內。", map:"2-chome-15-25 Nipponbashi, Chuo Ward, Osaka" },
-      { t:"15:30", n:"黑門市場", d:"飯店旁邊而已。海鮮丼、烤干貝、玉子燒，現買現吃。", map:"黒門市場" },
-      { t:"17:30", n:"道頓堀・心齋橋", d:"固力果看板、戎橋，順著商店街一路走。天黑後招牌全亮比較好拍。", map:"道頓堀" },
-      { t:"19:00", n:"法善寺橫丁晚餐", d:"石板小巷，兩側都是小店。關東煮、和牛都有。", map:"法善寺横丁" }
+      { t:"06:30", n:"民宿 → 京都車站寄行李", d:"五条站搭烏丸線兩站。置物櫃早上就開，大型櫃會先被搶光，早點到。", move:"地下鐵烏丸線 五条", map:"京都駅" },
+      { t:"07:15", n:"JR 奈良線 → 稻荷站", d:"只要 5 分鐘。出站就是伏見稻荷的表參道。", move:"JR 奈良線", map:"稲荷駅" },
+      { t:"07:30", n:"伏見稻荷大社 千本鳥居", d:"這個時間人最少最好拍。走到四辻有整片京都市景，從那邊折返就好。", map:"伏見稲荷大社" },
+      { t:"09:20", n:"京阪本線 → 祇園四条", d:"伏見稻荷站搭京阪，約 10 分鐘。", move:"京阪本線", map:"祇園四条駅" },
+      { t:"10:00", n:"錦市場", d:"京都的廚房。豆乳甜甜圈、玉子燒、漬物邊走邊吃。多數店家十點才陸續開。", map:"錦市場" },
+      { t:"11:30", n:"午餐", d:"錦市場周邊或新京極一帶解決。", map:"錦市場 京都" },
+      { t:"13:00", n:"金閣寺", d:"搭公車約 40 分鐘。金閣在陽光下反光很強，晴天最值得。逛完約 45 分鐘。", move:"市巴士 12 或 59", map:"金閣寺" },
+      { t:"15:30", n:"回京都車站取行李", d:"抓四點前拿到行李，留緩衝。", move:"市巴士 205", map:"京都駅" },
+      { t:"16:30", n:"JR → 大阪車站", d:"東海道·山陽本線新快速約 30 分鐘。行李多的話避開通勤尖峰的車廂中段。", move:"JR 京都線 新快速", map:"大阪駅" },
+      { t:"17:15", n:"梅田 → 難波", d:"從 JR 大阪站走到御堂筋線梅田站要一段路，指標跟著走。車程約 8 分鐘。", move:"御堂筋線", map:"難波駅 大阪" },
+      { t:"17:40", n:"民宿 Check-in", d:"難波站走 12 分鐘。日本橋二丁目，黑門市場、電電町都在旁邊。", map:"2-chome-15-25 Nipponbashi, Chuo Ward, Osaka" },
+      { t:"18:30", n:"心齋橋", d:"走過去就到。順著商店街一路逛到道頓堀，晚餐在這附近解決。", map:"心斎橋筋商店街" }
     ]
   },
   {
@@ -444,8 +460,9 @@ function mapUrl(q){ return "https://www.google.com/maps/search/?api=1&query=" + 
 
 function render(){
   const i = state.active, day = TRIP[i];
-  const doneCount = state.done[i].filter(Boolean).length;
-  const total = day.stops.length;
+  const core = day.stops.map((s, k) => !s.opt && state.done[i][k]);
+  const doneCount = core.filter(Boolean).length;
+  const total = day.stops.filter(s => !s.opt).length;
   const slot = nowSlot(i);
 
   const stopsHtml = day.stops.map((s, k) => {
@@ -453,11 +470,12 @@ function render(){
       ? `<div class="now"><div class="now-label">NOW</div><div class="now-mark"></div><div class="now-rule"></div></div>`
       : "";
     const chips = [
+      s.opt ? `<span class="chip opt">機動</span>` : "",
       s.move ? `<span class="chip move">${s.move}</span>` : "",
       `<a class="map-link" href="${mapUrl(s.map)}" target="_blank" rel="noopener">地圖</a>`
     ].join("");
     return marker + `
-      <div class="stop ${state.done[i][k] ? "done" : ""}">
+      <div class="stop ${state.done[i][k] ? "done" : ""} ${s.opt ? "optional" : ""}">
         <div class="stop-time">${s.t}</div>
         <div class="stop-rail"><span class="stop-dot"></span></div>
         <div class="stop-body">
