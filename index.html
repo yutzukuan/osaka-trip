@@ -355,11 +355,7 @@ footer hr{border:none;border-top:1px solid var(--line);margin:0 0 14px}
 
   <main id="panel"></main>
 
-  <footer>
-    <hr>
-    交通卡帶 ICOCA 就夠。京都那天巴士坐很多趟，市巴士一日券可以考慮；
-    大阪景點分散，週遊卡不一定划算，出發前再比一次。
-  </footer>
+
 </div>
 
 <script>
@@ -701,7 +697,7 @@ function renderPack(){
       <button class="pack-btn" type="button" id="packAdd">新增</button>
     </div>
     <div class="pack-groups">${groups}</div>
-    <div class="pack-foot"><p class="pack-note">清單存在這台裝置的瀏覽器裡，換手機不會同步。</p></div>`;
+    <div class="pack-foot"></div>`;
 
   $panel.querySelectorAll('.pack-row input').forEach(cb => {
     cb.addEventListener("change", e => {
