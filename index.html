@@ -249,6 +249,73 @@ body{
 }
 .now-rule{height:2px;background:var(--signal);margin-left:14px}
 
+/* ---------- 行李清單 ---------- */
+.day-tab.pack-tab{
+  border-color:#3D444D;background:#1C2026;color:#8E97A2;
+  display:flex;align-items:center;gap:6px;padding:9px 13px;
+}
+.day-tab.pack-tab .d-date{font-size:15px;letter-spacing:.1em}
+.day-tab.pack-tab[aria-selected="true"]{background:var(--signal);border-color:var(--signal);color:var(--ink)}
+.pack-sep{flex:0 0 1px;background:#333941;margin:4px 3px;align-self:stretch}
+
+.pack-head{padding:20px var(--pad) 0}
+.pack-title{font-family:"Barlow Condensed",sans-serif;font-size:32px;font-weight:700;line-height:1}
+.pack-title small{font-size:15px;color:var(--muted);font-weight:500;margin-left:8px;font-family:"Noto Sans TC",sans-serif}
+
+.pack-add{display:flex;gap:6px;margin:16px var(--pad) 0;flex-wrap:wrap}
+.pack-input{
+  flex:1 1 140px;min-width:0;padding:9px 11px;
+  border:1px solid var(--line);border-radius:3px;background:var(--card);
+  font-family:inherit;font-size:14px;color:var(--ink);outline:none;
+}
+.pack-input:focus{border-color:var(--accent)}
+.pack-select{
+  flex:0 0 auto;padding:9px 8px;border:1px solid var(--line);border-radius:3px;
+  background:var(--card);font-family:inherit;font-size:13px;color:var(--ink);cursor:pointer;outline:none;
+}
+.pack-btn{
+  flex:0 0 auto;padding:9px 16px;border:none;border-radius:3px;
+  background:var(--ink);color:#fff;font-family:inherit;font-size:13px;font-weight:700;
+  letter-spacing:.05em;cursor:pointer;
+}
+.pack-btn:hover{background:var(--accent)}
+.pack-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.pack-groups{padding:18px var(--pad) 40px}
+.pack-group{margin-bottom:18px}
+.pack-group-title{
+  font-size:11.5px;font-weight:700;letter-spacing:.16em;color:var(--muted);
+  margin-bottom:7px;padding-left:2px;
+}
+.pack-list{background:var(--card);border-radius:4px;overflow:hidden;box-shadow:0 1px 2px rgba(22,24,28,.07)}
+.pack-row{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 13px;border-bottom:1px solid #E6EAEC;
+}
+.pack-row:last-child{border-bottom:none}
+.pack-row input[type="checkbox"]{
+  appearance:none;-webkit-appearance:none;flex:0 0 auto;
+  width:17px;height:17px;border-radius:3px;border:2px solid var(--line);
+  background:var(--card);cursor:pointer;position:relative;
+}
+.pack-row input:checked{background:var(--accent);border-color:var(--accent)}
+.pack-row input:checked::after{
+  content:"";position:absolute;left:4.5px;top:1px;width:4px;height:9px;
+  border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg);
+}
+.pack-row input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pack-text{flex:1;font-size:14.5px;line-height:1.45;cursor:pointer}
+.pack-row.on .pack-text{color:var(--muted);text-decoration:line-through}
+.pack-del{
+  flex:0 0 auto;width:26px;height:26px;border:none;background:none;
+  color:#B9C1C6;font-size:19px;line-height:1;cursor:pointer;border-radius:3px;
+}
+.pack-del:hover{background:#F5DADA;color:#C0392B}
+.pack-del:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.pack-foot{text-align:center;padding:0 var(--pad) 8px}
+.pack-note{font-size:12px;color:var(--muted);line-height:1.7;margin-top:12px}
+
 footer{
   padding:0 var(--pad) 32px;
   font-size:12px;color:var(--muted);line-height:1.7;
@@ -392,7 +459,47 @@ const TRIP = [
 ];
 
 const YEAR = 2026;
-const state = { active: 0, done: TRIP.map(d => d.stops.map(() => false)) };
+const DONE_KEY = "kansai_done_v1";
+const PACK_KEY = "kansai_pack_v1";
+
+const PACK_DEFAULT = [
+  ["護照", "證件"], ["機票電子檔", "證件"], ["京都民宿訂房確認", "證件"],
+  ["大阪民宿訂房確認", "證件"], ["日圓現金", "證件"], ["信用卡", "證件"],
+  ["HARUKA 車票（先劃位）", "預約"], ["嵯峨野小火車 8/27 13:30", "預約"],
+  ["嵐山庭園下午茶", "預約"], ["Bingo 居酒屋 8/27", "預約"],
+  ["手機充電器", "電子"], ["行動電源", "電子"], ["Type A 轉接頭", "電子"],
+  ["相機・記憶卡", "電子"], ["耳機", "電子"],
+  ["防曬乳 SPF50+", "消暑"], ["小毛巾", "消暑"], ["手持電風扇", "消暑"],
+  ["保溫水壺", "消暑"], ["鹽糖・電解質粉", "消暑"],
+  ["換洗衣物 6 套", "衣物"], ["好走的鞋", "衣物"],
+  ["薄外套（室內冷氣強）", "衣物"], ["折疊傘", "衣物"],
+  ["牙刷牙膏", "盥洗"], ["洗面乳・保養品", "盥洗"],
+  ["常備藥", "備藥"], ["OK 繃", "備藥"], ["暈車藥", "備藥"]
+];
+const PACK_CATS = ["證件", "預約", "電子", "消暑", "衣物", "盥洗", "備藥", "其他"];
+
+function load(key, fallback){
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch(e){ return fallback; }
+}
+function save(key, val){
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){}
+}
+
+const blankDone = () => TRIP.map(d => d.stops.map(() => false));
+let savedDone = load(DONE_KEY, null);
+if (!Array.isArray(savedDone) || savedDone.length !== TRIP.length ||
+    savedDone.some((d, i) => !Array.isArray(d) || d.length !== TRIP[i].stops.length)) {
+  savedDone = blankDone();
+}
+
+let packItems = load(PACK_KEY, null);
+if (!Array.isArray(packItems) || !packItems.length) {
+  packItems = PACK_DEFAULT.map(([text, cat], i) => ({ id: i + 1, text, cat, on: false }));
+}
+let nextPackId = packItems.reduce((m, i) => Math.max(m, i.id), 0) + 1;
+
+const state = { active: 0, view: "day", done: savedDone };
 
 const $days  = document.getElementById("days");
 const $panel = document.getElementById("panel");
@@ -422,6 +529,18 @@ TRIP.forEach((day, i) => {
   $days.appendChild(b);
 });
 
+const sep = document.createElement("div");
+sep.className = "pack-sep";
+$days.appendChild(sep);
+
+const packBtn = document.createElement("button");
+packBtn.className = "day-tab pack-tab";
+packBtn.type = "button";
+packBtn.setAttribute("role", "tab");
+packBtn.innerHTML = `<span class="d-date">行李</span>`;
+packBtn.addEventListener("click", selectPack);
+$days.appendChild(packBtn);
+
 /* ---------- 目前該顯示哪一天 ---------- */
 function todayIndex(){
   const now = new Date();
@@ -448,7 +567,8 @@ function nowSlot(dayIdx){
 
 /* ---------- 繪製 ---------- */
 function select(i){
-  state.active = i;
+  state.active = i; state.view = "day";
+  packBtn.setAttribute("aria-selected", "false");
   document.documentElement.style.setProperty(
     "--accent", TRIP[i].city === "kyoto" ? "var(--kyoto)" : "var(--osaka)"
   );
@@ -514,17 +634,113 @@ function render(){
   $panel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
     cb.addEventListener("change", e => {
       state.done[i][Number(e.target.dataset.k)] = e.target.checked;
+      save(DONE_KEY, state.done);
       render();
     });
   });
   document.getElementById("resetBtn").addEventListener("click", () => {
     state.done[i] = state.done[i].map(() => false);
+    save(DONE_KEY, state.done);
     render();
   });
 }
 
+/* ---------- 行李清單 ---------- */
+function selectPack(){
+  state.view = "pack";
+  [...$days.querySelectorAll(".day-tab")].forEach(b => b.setAttribute("aria-selected", "false"));
+  packBtn.setAttribute("aria-selected", "true");
+  packBtn.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  document.documentElement.style.setProperty("--accent", "var(--osaka)");
+  renderPack();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function esc(t){
+  return String(t).replace(/[&<>"']/g, c =>
+    ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+
+function renderPack(){
+  const total = packItems.length;
+  const done  = packItems.filter(i => i.on).length;
+
+  const groups = PACK_CATS.map(cat => {
+    const items = packItems.filter(i => i.cat === cat);
+    if (!items.length) return "";
+    const rows = items.map(it => `
+      <div class="pack-row ${it.on ? "on" : ""}">
+        <input type="checkbox" data-id="${it.id}" ${it.on ? "checked" : ""}>
+        <label class="pack-text" for="">${esc(it.text)}</label>
+        <button class="pack-del" type="button" data-del="${it.id}" aria-label="刪除">×</button>
+      </div>`).join("");
+    return `<div class="pack-group">
+      <div class="pack-group-title">${cat}</div>
+      <div class="pack-list">${rows}</div>
+    </div>`;
+  }).join("");
+
+  const opts = PACK_CATS.map(c =>
+    `<option value="${c}"${c === "其他" ? " selected" : ""}>${c}</option>`).join("");
+
+  $panel.innerHTML = `
+    <div class="pack-head">
+      <div class="pack-title">行李清單<small>出發前打勾</small></div>
+      <div class="meter">
+        <div class="meter-bar"><div class="meter-fill" style="width:${total ? (done/total*100).toFixed(1) : 0}%"></div></div>
+        <div class="meter-row">
+          <span class="meter-count">${done} / ${total} 件</span>
+          <button class="reset" type="button" id="packReset">重置清單</button>
+        </div>
+      </div>
+    </div>
+    <div class="pack-add">
+      <input id="packInput" class="pack-input" type="text" placeholder="新增物品…">
+      <select id="packCat" class="pack-select">${opts}</select>
+      <button class="pack-btn" type="button" id="packAdd">新增</button>
+    </div>
+    <div class="pack-groups">${groups}</div>
+    <div class="pack-foot"><p class="pack-note">清單存在這台裝置的瀏覽器裡，換手機不會同步。</p></div>`;
+
+  $panel.querySelectorAll('.pack-row input').forEach(cb => {
+    cb.addEventListener("change", e => {
+      const it = packItems.find(i => i.id === Number(e.target.dataset.id));
+      if (it) { it.on = e.target.checked; save(PACK_KEY, packItems); renderPack(); }
+    });
+  });
+  $panel.querySelectorAll('.pack-text').forEach((lb, n) => {
+    lb.addEventListener("click", () => lb.previousElementSibling.click());
+  });
+  $panel.querySelectorAll('[data-del]').forEach(btn => {
+    btn.addEventListener("click", e => {
+      packItems = packItems.filter(i => i.id !== Number(e.currentTarget.dataset.del));
+      save(PACK_KEY, packItems); renderPack();
+    });
+  });
+
+  const input = document.getElementById("packInput");
+  const addIt = () => {
+    const t = input.value.trim();
+    if (!t) { input.focus(); return; }
+    packItems.push({ id: nextPackId++, text: t, cat: document.getElementById("packCat").value, on: false });
+    save(PACK_KEY, packItems);
+    renderPack();
+    document.getElementById("packInput").focus();
+  };
+  document.getElementById("packAdd").addEventListener("click", addIt);
+  input.addEventListener("keydown", e => { if (e.key === "Enter") addIt(); });
+
+  document.getElementById("packReset").addEventListener("click", () => {
+    if (!confirm("重置清單？自訂項目會被刪除，勾選也會清空。")) return;
+    packItems = PACK_DEFAULT.map(([text, cat], i) => ({ id: i + 1, text, cat, on: false }));
+    nextPackId = packItems.length + 1;
+    save(PACK_KEY, packItems);
+    renderPack();
+  });
+}
+
 select(todayIndex());
-setInterval(render, 60000);
+setInterval(() => { if (state.view === "day") render(); }, 60000);
 </script>
 </body>
 </html>
