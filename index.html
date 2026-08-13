@@ -518,6 +518,18 @@ const $panel = document.getElementById("panel");
 })();
 
 /* ---------- 日期分頁 ---------- */
+const packBtn = document.createElement("button");
+packBtn.className = "day-tab pack-tab";
+packBtn.type = "button";
+packBtn.setAttribute("role", "tab");
+packBtn.innerHTML = `<span class="d-date">行李</span>`;
+packBtn.addEventListener("click", selectPack);
+$days.appendChild(packBtn);
+
+const sep = document.createElement("div");
+sep.className = "pack-sep";
+$days.appendChild(sep);
+
 TRIP.forEach((day, i) => {
   const b = document.createElement("button");
   b.className = "day-tab";
@@ -528,18 +540,6 @@ TRIP.forEach((day, i) => {
   b.addEventListener("click", () => select(i));
   $days.appendChild(b);
 });
-
-const sep = document.createElement("div");
-sep.className = "pack-sep";
-$days.appendChild(sep);
-
-const packBtn = document.createElement("button");
-packBtn.className = "day-tab pack-tab";
-packBtn.type = "button";
-packBtn.setAttribute("role", "tab");
-packBtn.innerHTML = `<span class="d-date">行李</span>`;
-packBtn.addEventListener("click", selectPack);
-$days.appendChild(packBtn);
 
 /* ---------- 目前該顯示哪一天 ---------- */
 function todayIndex(){
@@ -572,8 +572,9 @@ function select(i){
   document.documentElement.style.setProperty(
     "--accent", TRIP[i].city === "kyoto" ? "var(--kyoto)" : "var(--osaka)"
   );
-  [...$days.children].forEach((b, k) => b.setAttribute("aria-selected", k === i));
-  $days.children[i].scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  const dayBtns = $days.querySelectorAll(".day-tab:not(.pack-tab)");
+  dayBtns.forEach((b, k) => b.setAttribute("aria-selected", k === i));
+  dayBtns[i].scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
   render();
 }
 
